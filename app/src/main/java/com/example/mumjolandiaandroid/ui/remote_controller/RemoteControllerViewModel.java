@@ -1,16 +1,16 @@
-package com.example.mumjolandiaandroid.ui.gallery;
+package com.example.mumjolandiaandroid.ui.remote_controller;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class RemoteControllerViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public RemoteControllerViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is remote controller fragment");
     }
 
     public LiveData<String> getText() {
