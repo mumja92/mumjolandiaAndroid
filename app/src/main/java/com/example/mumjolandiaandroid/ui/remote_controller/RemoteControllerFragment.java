@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,20 +18,70 @@ import com.example.mumjolandiaandroid.R;
 
 public class RemoteControllerFragment extends Fragment {
 
-    private RemoteControllerViewModel remoteControllerViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        remoteControllerViewModel =
-                ViewModelProviders.of(this).get(RemoteControllerViewModel.class);
         View root = inflater.inflate(R.layout.fragment_remote_controller, container, false);
-        final TextView textView = root.findViewById(R.id.text_remote_controller);
-        remoteControllerViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+
+        Button buttonPlayPause = root.findViewById(R.id.buttonPlayPause);
+        Button buttonNext = root.findViewById(R.id.buttonNext);
+        Button buttonPrevious = root.findViewById(R.id.buttonPrevious);
+        Button buttonMute = root.findViewById(R.id.buttonMute);
+        Button buttonVolUp = root.findViewById(R.id.buttonVolUp);
+        Button buttonVolDown = root.findViewById(R.id.buttonVolDown);
+
+        buttonPlayPause.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onClick(View v)
+            {
+                sendCommand("play");
+            }
+        });
+        buttonNext.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                sendCommand("next");
+            }
+        });
+        buttonPrevious.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                sendCommand("prev");
+            }
+        });
+        buttonMute.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                sendCommand("mute");
+            }
+        });
+        buttonVolUp.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                sendCommand("vol+");
+            }
+        });
+        buttonVolDown.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                sendCommand("vol-");
             }
         });
         return root;
+    }
+
+    private void sendCommand(String command){
+        Toast.makeText(getActivity(), command,
+                Toast.LENGTH_LONG).show();
     }
 }
