@@ -1,5 +1,7 @@
 package com.example.mumjolandiaandroid.ui.remote_controller;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +84,9 @@ public class RemoteControllerFragment extends Fragment {
     }
 
     private void sendCommand(String command){
-        new MumjolandiaCommunicator("10.0.2.2", 3333).execute(command);
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        String ip = prefs.getString(getString(R.string.mumjolandiaIpKey), "127.0.0.1");
+        int port = prefs.getInt(getString(R.string.mumjolandiaPortKey), 3333);
+        new MumjolandiaCommunicator(ip, port).execute(command);
     }
 }
