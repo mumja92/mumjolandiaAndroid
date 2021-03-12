@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_menu_remote_controller"
             android:title="@string/menu_remote_controller" />
         <item
+            android:id="@+id/nav_tetris"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/menu_tetris" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_settings"
             android:title="@string/menu_settings" />
