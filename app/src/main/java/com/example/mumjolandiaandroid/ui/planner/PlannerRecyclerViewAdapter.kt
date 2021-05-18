@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mumjolandiaandroid.ui.planner.PlannerRecyclerViewAdapter.ViewHolder
 
 
-class PlannerRecyclerViewAdapter internal constructor(context: Context?, data: List<String>) : RecyclerView.Adapter<ViewHolder>() {
-    private var mData: List<String>
+class PlannerRecyclerViewAdapter internal constructor(context: Context?, data: List<PlannerTask>) : RecyclerView.Adapter<ViewHolder>() {
+    private var mData: List<PlannerTask>
     private val mInflater: LayoutInflater
     private var mClickListener: ItemClickListener? = null
 
@@ -25,8 +25,9 @@ class PlannerRecyclerViewAdapter internal constructor(context: Context?, data: L
 
     // binds the data to the TextView in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val animal = mData[position]
-        holder.myTextView.text = animal
+        val task = mData[position]
+        val text = task.time + ": " + task.description
+        holder.myTextView.text = text
     }
 
     // total number of rows
@@ -49,10 +50,10 @@ class PlannerRecyclerViewAdapter internal constructor(context: Context?, data: L
 
     // convenience method for getting data at click position
     fun getItem(id: Int): String {
-        return mData[id]
+        return mData[id].description
     }
 
-    fun reset(data: List<String>){
+    fun reset(data: List<PlannerTask>){
         mData = data
         notifyDataSetChanged()
     }

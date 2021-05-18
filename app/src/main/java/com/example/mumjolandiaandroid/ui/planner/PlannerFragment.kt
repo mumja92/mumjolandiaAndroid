@@ -53,7 +53,8 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     }
 
     override fun onItemClick(view: View?, position: Int) {
-        Toast.makeText(activity, "You clicked " + recyclerViewAdapter?.getItem(position).toString() + " on row number " + position, Toast.LENGTH_SHORT).show()
+        PlannerBackgroundTask("127.0.0.1", 3335, recyclerViewAdapter, context).execute("dupa")
+        //Toast.makeText(activity, "You clicked " + recyclerViewAdapter?.getItem(position).toString() + " on row number " + position, Toast.LENGTH_SHORT).show()
     }
 
     private fun changeChosenDay(dayShift: Int){
@@ -79,19 +80,30 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     ) : MumjolandiaCommunicator(ip, port) {
         public override fun onPostExecute(result: String) {
             val textView2: TextView = (context as Activity).findViewById(R.id.textViewPlannerStatus)
-            textView2.text = result
-            adapter?.reset(parseMumjolandiaResult(result))
+            val separatedList: List<String> = result.split("\n")
+            val mumjolandiaReturnValue = separatedList[0]
+            textView2.text = mumjolandiaReturnValue
+            if (mumjolandiaReturnValue == "MumjolandiaReturnValue.planner_get_ok"){
+                adapter?.reset(getNewPlannerTaskArray(separatedList))
+            }
+            else{
+                Toast.makeText(context, "no costam dziala", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        private fun parseMumjolandiaResult(result: String): ArrayList<String>{
-            val returnList = ArrayList<String>()
-            val separatedList: List<String> = result.split("\n")
+        private fun getNewPlannerTaskArray(separatedList: List<String>): ArrayList<PlannerTask>{
+            val receivedTasks = ArrayList<PlannerTask>()
             var loopIndex = 5
             while (loopIndex < separatedList.size){
-                returnList.add(separatedList[loopIndex-2] + ": " + separatedList[loopIndex])
+                receivedTasks.add(
+                        PlannerTask(
+                                separatedList[loopIndex-2],
+                                60,
+                                separatedList[loopIndex]))
+                //returnList.add(separatedList[loopIndex-2] + ": " + separatedList[loopIndex])
                 loopIndex += 3
             }
-            return returnList
+            return PlanGenerator().generate(receivedTasks)
         }
     }
 }
