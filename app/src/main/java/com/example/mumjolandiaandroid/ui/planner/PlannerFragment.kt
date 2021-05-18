@@ -1,12 +1,14 @@
 package com.example.mumjolandiaandroid.ui.planner
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -16,7 +18,6 @@ import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.utils.Helpers
 import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator
 import kotlinx.android.synthetic.main.fragment_planner.*
-import java.lang.NullPointerException
 
 
 class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener {
@@ -26,10 +27,19 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     private var buttonPreviousDay: Button? = null
     private var buttonNextDay: Button? = null
     private var chosenDay: Int = 0
+    private var alertChooseTaskName: AlertDialog.Builder? = null
+    private var userChosenItemPosition = 0
+    private var mumjolandiaIp = "127.0.0.1"
+    private var mumjolandiaPort = 3335
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_planner, container, false)
+
+        initAlert()
+
+        initStuff()
+
         viewChosenDay = root.findViewById(R.id.textViewPlannerChosenDay)
         viewChosenDay?.text=chosenDay.toString()
 
@@ -53,15 +63,11 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     }
 
     override fun onItemClick(view: View?, position: Int) {
-        PlannerBackgroundTask("127.0.0.1", 3335, recyclerViewAdapter, context).execute("dupa")
-        //Toast.makeText(activity, "You clicked " + recyclerViewAdapter?.getItem(position).toString() + " on row number " + position, Toast.LENGTH_SHORT).show()
+        userChosenItemPosition = position
+        showDialogGetTaskName()
     }
 
     private fun changeChosenDay(dayShift: Int){
-        var local_ip = "127.0.0.1"
-        if (Helpers.isEmulator()) {
-            local_ip = "10.0.2.2"
-        }
         chosenDay += dayShift
         val command = "planner get $chosenDay"
         try{
@@ -69,7 +75,7 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         }
         catch (ex: NullPointerException){
         }
-        PlannerBackgroundTask(local_ip, 3335, recyclerViewAdapter, context).execute(command)
+        PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute(command)
     }
 
     private class PlannerBackgroundTask(
@@ -83,11 +89,19 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
             val separatedList: List<String> = result.split("\n")
             val mumjolandiaReturnValue = separatedList[0]
             textView2.text = mumjolandiaReturnValue
-            if (mumjolandiaReturnValue == "MumjolandiaReturnValue.planner_get_ok"){
-                adapter?.reset(getNewPlannerTaskArray(separatedList))
-            }
-            else{
-                Toast.makeText(context, "no costam dziala", Toast.LENGTH_SHORT).show()
+            when (mumjolandiaReturnValue) {
+                "MumjolandiaReturnValue.planner_get_ok" -> {
+                    adapter?.reset(getNewPlannerTaskArray(separatedList))
+                }
+                "MumjolandiaReturnValue.planner_add_ok" -> {
+
+                }
+                else -> {
+                    Toast.makeText(
+                            context,
+                            "Unhandled mumjolandia return value",
+                            Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -97,13 +111,38 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
             while (loopIndex < separatedList.size){
                 receivedTasks.add(
                         PlannerTask(
-                                separatedList[loopIndex-2],
+                                separatedList[loopIndex - 2],
                                 60,
                                 separatedList[loopIndex]))
-                //returnList.add(separatedList[loopIndex-2] + ": " + separatedList[loopIndex])
                 loopIndex += 3
             }
             return PlanGenerator().generate(receivedTasks)
+        }
+    }
+
+    private fun initAlert(){
+        alertChooseTaskName = AlertDialog.Builder(context)
+        alertChooseTaskName?.setTitle("Enter task name:")
+        val input = EditText(context)
+        alertChooseTaskName?.setView(input)
+        alertChooseTaskName?.setPositiveButton("Accept") { dialog, _ ->
+            val command = "planner add " + chosenDay.toString() + " " + recyclerViewAdapter?.getItem(userChosenItemPosition)?.time + " " + recyclerViewAdapter?.getItem(userChosenItemPosition)?.duration + " '" + input.text.toString() + "'"
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute(command)
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute("planner get $chosenDay")
+            dialog.dismiss()
+        }
+        alertChooseTaskName?.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+    }
+
+    private fun showDialogGetTaskName(){
+        initAlert()
+        alertChooseTaskName?.show()
+    }
+    private fun initStuff(){
+        if (Helpers.isEmulator()) {
+            mumjolandiaIp = "10.0.2.2"
         }
     }
 }

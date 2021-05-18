@@ -49,8 +49,8 @@ class PlannerRecyclerViewAdapter internal constructor(context: Context?, data: L
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String {
-        return mData[id].description
+    fun getItem(id: Int): PlannerTask {
+        return mData[id]
     }
 
     fun reset(data: List<PlannerTask>){
