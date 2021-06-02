@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +18,9 @@ import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.utils.Helpers
 import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator
 import kotlinx.android.synthetic.main.fragment_planner.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener {
@@ -58,6 +64,11 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        changeChosenDay(0)
+    }
+
     override fun onItemClick(view: View?, position: Int) {
         showDialogGetTaskName(position)
     }
@@ -66,7 +77,7 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         chosenDay += dayShift
         val command = "planner get $chosenDay"
         try{
-            textViewPlannerChosenDay.text = chosenDay.toString()
+            textViewPlannerChosenDay.text = translateShiftDayToText(chosenDay)
         }
         catch (ex: NullPointerException){
         }
@@ -84,7 +95,11 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
             val separatedList: List<String> = result.split("\n")
             val mumjolandiaReturnValue = separatedList[0]
             if (mumjolandiaReturnValue != "MumjolandiaReturnValue.planner_get_ok"){
-                textView2.text = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length)
+                var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()
+                returnStatus += " " + Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString()
+                returnStatus += ":" + Calendar.getInstance().get(Calendar.MINUTE).toString()
+                returnStatus += ":" + Calendar.getInstance().get(Calendar.SECOND).toString()
+                textView2.text = returnStatus
             }
             when (mumjolandiaReturnValue) {
                 "MumjolandiaReturnValue.planner_get_ok" -> {
@@ -146,5 +161,25 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     private fun showDialogGetTaskName(index: Int){
         initAlert(index)
         dialogAddPlannerTask?.show()
+    }
+
+    private fun translateShiftDayToText(shift_day: Int): String{
+        return when (shift_day) {
+            -1 -> {
+                "Yesterday"
+            }
+            0 -> {
+                "Today"
+            }
+            1 -> {
+                "Tomorrow"
+            }
+            else -> {
+                val c = Calendar.getInstance()
+                c.time = Date()
+                c.add(Calendar.DATE, shift_day)
+                return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time)
+            }
+        }
     }
 }
