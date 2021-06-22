@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.mumjolandiaandroid.R;
+import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator;
 
 public class RemoteControllerFragment extends Fragment {
 
@@ -81,7 +82,6 @@ public class RemoteControllerFragment extends Fragment {
     }
 
     private void sendCommand(String command){
-        Toast.makeText(getActivity(), command,
-                Toast.LENGTH_LONG).show();
+        new MumjolandiaCommunicator("10.0.2.2", 3333).execute(command);
     }
 }
