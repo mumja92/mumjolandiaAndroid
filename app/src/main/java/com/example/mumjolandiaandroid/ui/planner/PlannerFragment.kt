@@ -44,6 +44,9 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
 
         viewChosenDay = root.findViewById(R.id.textViewPlannerChosenDay)
         viewChosenDay?.text=chosenDay.toString()
+        viewChosenDay?.setOnClickListener {
+            changeChosenDay(null)
+        }
 
         buttonPreviousDay = root.findViewById(R.id.buttonPlannerPreviousDay)
         buttonPreviousDay?.setOnClickListener {
@@ -73,8 +76,13 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         showDialogGetTaskName(position)
     }
 
-    private fun changeChosenDay(dayShift: Int){
-        chosenDay += dayShift
+    private fun changeChosenDay(dayShift: Int?){
+        if (dayShift != null) {
+            chosenDay += dayShift
+        }
+        else {
+            chosenDay = 0
+        }
         val command = "planner get $chosenDay"
         try{
             textViewPlannerChosenDay.text = translateShiftDayToText(chosenDay)
@@ -117,7 +125,7 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
                 receivedTasks.add(
                         PlannerTask(
                                 separatedList[loopIndex - 2],
-                                60,
+                                separatedList[loopIndex - 1].toInt(),
                                 separatedList[loopIndex]))
                 loopIndex += 3
             }
@@ -135,7 +143,9 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         description.hint = "Description"
         val duration = EditText(context)
         duration.hint = "Duration (minutes)"
+        duration.setText("60")
         val time = EditText(context)
+        time.hint = "HH:MM"
         time.setText(recyclerViewAdapter?.getItem(index)?.time)
 
 
@@ -178,7 +188,7 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
                 val c = Calendar.getInstance()
                 c.time = Date()
                 c.add(Calendar.DATE, shift_day)
-                return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time)
+                return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time) + " (" + SimpleDateFormat("EEEE", Locale.getDefault()).format(c.time) + ")"
             }
         }
     }
