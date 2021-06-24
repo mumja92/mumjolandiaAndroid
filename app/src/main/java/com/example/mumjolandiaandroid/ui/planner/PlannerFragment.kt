@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -100,20 +97,25 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
     ) : MumjolandiaCommunicator(ip, port) {
         public override fun onPostExecute(result: String) {
             val textView2: TextView = (context as Activity).findViewById(R.id.textViewPlannerStatus)
-            val separatedList: List<String> = result.split("\n")
-            val mumjolandiaReturnValue = separatedList[0]
-            if (mumjolandiaReturnValue != "MumjolandiaReturnValue.planner_get_ok"){
-                var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()
-                returnStatus += " " + Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString()
-                returnStatus += ":" + Calendar.getInstance().get(Calendar.MINUTE).toString()
-                returnStatus += ":" + Calendar.getInstance().get(Calendar.SECOND).toString()
-                textView2.text = returnStatus
+            if (result == ""){
+                Toast.makeText(context, "Can't connect to mumjolandia", Toast.LENGTH_SHORT).show()
             }
-            when (mumjolandiaReturnValue) {
-                "MumjolandiaReturnValue.planner_get_ok" -> {
-                    adapter?.reset(getNewPlannerTaskArray(separatedList))
+            else{
+                val separatedList: List<String> = result.split("\n")
+                val mumjolandiaReturnValue = separatedList[0]
+                if (mumjolandiaReturnValue != "MumjolandiaReturnValue.planner_get_ok"){
+                    var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()
+                    returnStatus += " " + Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString()
+                    returnStatus += ":" + Calendar.getInstance().get(Calendar.MINUTE).toString()
+                    returnStatus += ":" + Calendar.getInstance().get(Calendar.SECOND).toString()
+                    textView2.text = returnStatus
                 }
-                else -> {
+                when (mumjolandiaReturnValue) {
+                    "MumjolandiaReturnValue.planner_get_ok" -> {
+                        adapter?.reset(getNewPlannerTaskArray(separatedList))
+                    }
+                    else -> {
+                    }
                 }
             }
         }

@@ -25,7 +25,7 @@ public class MumjolandiaCommunicator extends AsyncTask<String, Void, String> {
     }
 
     private String send(String command){
-        String return_value = "error";
+        String return_value = "";
         try (Socket socket = new Socket(serverIp, serverPort)) {
             byte[] messageLength = intToByteArray(command.length());
             byte[] message = command.getBytes();
