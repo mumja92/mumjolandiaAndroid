@@ -41,6 +41,15 @@
         app:layout_constraintTop_toTopOf="@+id/buttonPlannerPreviousDay" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewNormalTasks"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/buttonPlannerPreviousDay"
+        app:layout_constraintBottom_toTopOf="@+id/textViewPlannerStatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPlannerTasks"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -61,4 +70,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/planner_floating_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewPlannerTasks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
 </androidx.constraintlayout.widget.ConstraintLayout>

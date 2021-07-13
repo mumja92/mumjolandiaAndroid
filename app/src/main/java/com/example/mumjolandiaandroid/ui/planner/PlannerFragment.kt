@@ -14,22 +14,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.utils.Helpers
 import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_planner.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener {
+class PlannerFragment : Fragment(),
+    PlannerRecyclerViewAdapter.ItemClickListener,
+    TaskRecyclerViewAdapter.ItemClickListener
+{
     private var viewChosenDay: TextView? = null
-    private var recyclerView: RecyclerView? = null
-    private var recyclerViewAdapter: PlannerRecyclerViewAdapter? = null
+    private var plannerRecyclerView: RecyclerView? = null
+    private var plannerRecyclerViewAdapter: PlannerRecyclerViewAdapter? = null
+    private var taskRecyclerView: RecyclerView? = null
+    private var taskRecyclerViewAdapter: TaskRecyclerViewAdapter? = null
     private var buttonPreviousDay: Button? = null
     private var buttonNextDay: Button? = null
     private var chosenDay: Int = 0
     private var dialogAddPlannerTask: AlertDialog.Builder? = null
     private var mumjolandiaIp = "127.0.0.1"
     private var mumjolandiaPort = 3335
+    private var swapTaskAndPlanner = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -54,13 +62,28 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
             changeChosenDay(1)
         }
 
-        recyclerView = root.findViewById(R.id.recyclerViewPlannerTasks)
-        recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerViewAdapter = PlannerRecyclerViewAdapter(activity, ArrayList())
-        recyclerViewAdapter?.setClickListener(this)
-        recyclerView?.adapter = recyclerViewAdapter
+        plannerRecyclerView = root.findViewById(R.id.recyclerViewPlannerTasks)
+        plannerRecyclerView?.layoutManager = LinearLayoutManager(activity)
+        plannerRecyclerViewAdapter = PlannerRecyclerViewAdapter(activity, ArrayList())
+        plannerRecyclerViewAdapter?.setClickListener(this)
+        plannerRecyclerView?.adapter = plannerRecyclerViewAdapter
 
+        taskRecyclerView = root.findViewById(R.id.recyclerViewNormalTasks)
+        taskRecyclerView?.layoutManager = LinearLayoutManager(activity)
+        taskRecyclerViewAdapter = TaskRecyclerViewAdapter(activity, ArrayList())
+        taskRecyclerViewAdapter?.setClickListener(this)
+        taskRecyclerView?.adapter = taskRecyclerViewAdapter
+
+        swapTaskAndPlanner()
         changeChosenDay(0)
+
+        val fab: FloatingActionButton = root.findViewById(R.id.planner_floating_button)
+        fab.setOnClickListener { view ->
+            swapTaskAndPlanner()
+            changeChosenDay(chosenDay)
+            Snackbar.make(view, "Planner fragment", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
         return root
     }
 
@@ -73,6 +96,18 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         showDialogGetTaskName(position)
     }
 
+    private fun swapTaskAndPlanner(){
+        if (swapTaskAndPlanner){
+            taskRecyclerView?.visibility = View.VISIBLE
+            plannerRecyclerView?.visibility = View.INVISIBLE
+        }
+        else{
+            taskRecyclerView?.visibility = View.INVISIBLE
+            plannerRecyclerView?.visibility = View.VISIBLE
+        }
+        swapTaskAndPlanner = !swapTaskAndPlanner
+
+    }
     private fun changeChosenDay(dayShift: Int?){
         if (dayShift != null) {
             chosenDay += dayShift
@@ -80,13 +115,30 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         else {
             chosenDay = 0
         }
-        val command = "planner get $chosenDay"
         try{
             textViewPlannerChosenDay.text = translateShiftDayToText(chosenDay)
         }
         catch (ex: NullPointerException){
         }
-        PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute(command)
+        if (swapTaskAndPlanner){
+            changeChosenDayPlanner()
+        }
+        else{
+            changeChosenDayTask()
+        }
+    }
+
+    private fun changeChosenDayPlanner(){
+        val command = "planner get $chosenDay"
+        PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context).execute(command)
+    }
+
+    private fun changeChosenDayTask(){
+        var command = "task ls $chosenDay"
+        if (chosenDay == 0){
+            command = "task ls"
+        }
+        TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context).execute(command)
     }
 
     private class PlannerBackgroundTask(
@@ -135,6 +187,35 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         }
     }
 
+    private class TaskBackgroundTask(
+        ip: String,
+        port: Int,
+        private val adapter: TaskRecyclerViewAdapter?,
+        private val context: Context?,
+    ) : MumjolandiaCommunicator(ip, port) {
+        public override fun onPostExecute(result: String) {
+            if (result != ""){
+                val separatedList: List<String> = result.split("\n")
+                val mumjolandiaReturnValue = separatedList[0]
+                when (mumjolandiaReturnValue) {
+                    "MumjolandiaReturnValue.task_get" -> {
+                        adapter?.reset(getNewTaskArray(separatedList.drop(1)))
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
+
+        private fun getNewTaskArray(separatedList: List<String>): ArrayList<String>{
+            val receivedTasks = ArrayList<String>()
+            for (task in separatedList){
+                receivedTasks.add(task)
+            }
+            return receivedTasks
+        }
+    }
+
     private fun initAlert(index: Int){
         val layout = LinearLayout(context)
         layout.orientation = LinearLayout.VERTICAL
@@ -148,7 +229,7 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         duration.setText("60")
         val time = EditText(context)
         time.hint = "HH:MM"
-        time.setText(recyclerViewAdapter?.getItem(index)?.time)
+        time.setText(plannerRecyclerViewAdapter?.getItem(index)?.time)
 
 
         layout.addView(description)
@@ -158,14 +239,14 @@ class PlannerFragment : Fragment(), PlannerRecyclerViewAdapter.ItemClickListener
         dialogAddPlannerTask?.setView(layout)
         dialogAddPlannerTask?.setPositiveButton("Add") { dialog, _ ->
             val command = "planner add " + chosenDay.toString() + " " + time.text.toString() + " " + duration.text.toString() + " '" + description.text.toString() + "'"
-            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute(command)
-            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute("planner get $chosenDay")
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context).execute(command)
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context).execute("planner get $chosenDay")
             dialog.dismiss()
         }
         dialogAddPlannerTask?.setNegativeButton("Delete") { dialog, _ ->
-            val command = "planner remove " + chosenDay.toString() + " " + recyclerViewAdapter?.getItem(index)?.time
-            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute(command)
-            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, recyclerViewAdapter, context).execute("planner get $chosenDay")
+            val command = "planner remove " + chosenDay.toString() + " " + plannerRecyclerViewAdapter?.getItem(index)?.time
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context).execute(command)
+            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context).execute("planner get $chosenDay")
             dialog.dismiss()
         }
     }
