@@ -16,6 +16,7 @@ import com.example.mumjolandiaandroid.ui.planner.task.TaskBackgroundTask
 import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter
 import com.example.mumjolandiaandroid.utils.Helpers
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_planner.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -79,9 +80,15 @@ class PlannerFragment : Fragment(),
         changeChosenDay(0)
 
         val fab: FloatingActionButton = root!!.findViewById(R.id.planner_floating_button)
-        fab.setOnClickListener {
+        fab.setOnClickListener {view ->
             swapTaskAndPlanner()
             changeChosenDay(chosenDay)
+            var infoText = "Task"
+            if (swapTaskAndPlanner){
+                infoText = "Plan"
+            }
+            Snackbar.make(view, infoText, Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show()
         }
         return root
     }
