@@ -45,7 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/buttonPlannerPreviousDay"
-        app:layout_constraintBottom_toTopOf="@+id/textViewPlannerStatus"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -54,22 +54,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/buttonPlannerPreviousDay"
-        app:layout_constraintBottom_toTopOf="@+id/textViewPlannerStatus"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-        android:id="@+id/textViewPlannerStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:minEms="50"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/planner_floating_button"

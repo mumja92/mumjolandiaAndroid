@@ -1,11 +1,10 @@
 package com.example.mumjolandiaandroid.ui.planner.plan
 
-import android.app.Activity
 import android.content.Context
-import android.widget.TextView
+import android.view.View
 import android.widget.Toast
-import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator
+import com.google.android.material.snackbar.Snackbar
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -14,9 +13,9 @@ class PlannerBackgroundTask(
     port: Int,
     private val adapter: PlannerRecyclerViewAdapter?,
     private val context: Context?,
+    private val rootView: View,
 ) : MumjolandiaCommunicator(ip, port) {
     public override fun onPostExecute(result: String) {
-        val textView2: TextView = (context as Activity).findViewById(R.id.textViewPlannerStatus)
         if (result == ""){
             Toast.makeText(context, "Can't connect to mumjolandia", Toast.LENGTH_SHORT).show()
         }
@@ -28,7 +27,8 @@ class PlannerBackgroundTask(
                 returnStatus += " " + Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString()
                 returnStatus += ":" + Calendar.getInstance().get(Calendar.MINUTE).toString()
                 returnStatus += ":" + Calendar.getInstance().get(Calendar.SECOND).toString()
-                textView2.text = returnStatus
+                Snackbar.make(rootView, returnStatus, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
             }
             when (mumjolandiaReturnValue) {
                 "MumjolandiaReturnValue.planner_get_ok" -> {
