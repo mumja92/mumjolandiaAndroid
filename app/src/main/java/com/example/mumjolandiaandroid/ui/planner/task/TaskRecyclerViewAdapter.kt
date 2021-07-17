@@ -1,4 +1,4 @@
-package com.example.mumjolandiaandroid.ui.planner
+package com.example.mumjolandiaandroid.ui.planner.task
 
 import com.example.mumjolandiaandroid.R
 
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mumjolandiaandroid.ui.planner.TaskRecyclerViewAdapter.ViewHolder
+import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter.ViewHolder
 
 
 class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List<String>) : RecyclerView.Adapter<ViewHolder>() {

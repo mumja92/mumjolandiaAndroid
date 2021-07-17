@@ -1,4 +1,4 @@
-package com.example.mumjolandiaandroid.ui.planner
+package com.example.mumjolandiaandroid.ui.planner.plan
 
 data class PlannerTask(
         var time: String,

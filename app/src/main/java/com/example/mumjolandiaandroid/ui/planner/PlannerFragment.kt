@@ -1,8 +1,6 @@
 package com.example.mumjolandiaandroid.ui.planner
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mumjolandiaandroid.R
+import com.example.mumjolandiaandroid.ui.planner.plan.PlannerBackgroundTask
+import com.example.mumjolandiaandroid.ui.planner.plan.PlannerRecyclerViewAdapter
+import com.example.mumjolandiaandroid.ui.planner.task.TaskBackgroundTask
+import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter
 import com.example.mumjolandiaandroid.utils.Helpers
-import com.example.mumjolandiaandroid.utils.MumjolandiaCommunicator
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_planner.*
@@ -139,81 +140,6 @@ class PlannerFragment : Fragment(),
             command = "task ls"
         }
         TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context).execute(command)
-    }
-
-    private class PlannerBackgroundTask(
-            ip: String,
-            port: Int,
-            private val adapter: PlannerRecyclerViewAdapter?,
-            private val context: Context?,
-    ) : MumjolandiaCommunicator(ip, port) {
-        public override fun onPostExecute(result: String) {
-            val textView2: TextView = (context as Activity).findViewById(R.id.textViewPlannerStatus)
-            if (result == ""){
-                Toast.makeText(context, "Can't connect to mumjolandia", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                val separatedList: List<String> = result.split("\n")
-                val mumjolandiaReturnValue = separatedList[0]
-                if (mumjolandiaReturnValue != "MumjolandiaReturnValue.planner_get_ok"){
-                    var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()
-                    returnStatus += " " + Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString()
-                    returnStatus += ":" + Calendar.getInstance().get(Calendar.MINUTE).toString()
-                    returnStatus += ":" + Calendar.getInstance().get(Calendar.SECOND).toString()
-                    textView2.text = returnStatus
-                }
-                when (mumjolandiaReturnValue) {
-                    "MumjolandiaReturnValue.planner_get_ok" -> {
-                        adapter?.reset(getNewPlannerTaskArray(separatedList))
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
-
-        private fun getNewPlannerTaskArray(separatedList: List<String>): ArrayList<PlannerTask>{
-            val receivedTasks = ArrayList<PlannerTask>()
-            var loopIndex = 5
-            while (loopIndex < separatedList.size){
-                receivedTasks.add(
-                        PlannerTask(
-                                separatedList[loopIndex - 2],
-                                separatedList[loopIndex - 1].toInt(),
-                                separatedList[loopIndex]))
-                loopIndex += 3
-            }
-            return PlanGenerator().generate(receivedTasks)
-        }
-    }
-
-    private class TaskBackgroundTask(
-        ip: String,
-        port: Int,
-        private val adapter: TaskRecyclerViewAdapter?,
-        private val context: Context?,
-    ) : MumjolandiaCommunicator(ip, port) {
-        public override fun onPostExecute(result: String) {
-            if (result != ""){
-                val separatedList: List<String> = result.split("\n")
-                val mumjolandiaReturnValue = separatedList[0]
-                when (mumjolandiaReturnValue) {
-                    "MumjolandiaReturnValue.task_get" -> {
-                        adapter?.reset(getNewTaskArray(separatedList.drop(1)))
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
-
-        private fun getNewTaskArray(separatedList: List<String>): ArrayList<String>{
-            val receivedTasks = ArrayList<String>()
-            for (task in separatedList){
-                receivedTasks.add(task)
-            }
-            return receivedTasks
-        }
     }
 
     private fun initAlert(index: Int){

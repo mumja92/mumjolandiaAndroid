@@ -1,7 +1,6 @@
-package com.example.mumjolandiaandroid.ui.planner
+package com.example.mumjolandiaandroid.ui.planner.plan
 
 import com.example.mumjolandiaandroid.utils.DateHelper
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -57,7 +56,7 @@ class PlanGenerator {
         return  returnArray
     }
 
-    private fun getTaskEnd(task: PlannerTask): PlannerTask{
+    private fun getTaskEnd(task: PlannerTask): PlannerTask {
         return PlannerTask(DateHelper().getStringFromDate(DateHelper().getDateFromString(task.time, task.duration)!!), 0, "")
     }
 

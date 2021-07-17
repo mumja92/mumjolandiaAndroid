@@ -1,4 +1,4 @@
-package com.example.mumjolandiaandroid.ui.planner
+package com.example.mumjolandiaandroid.ui.planner.plan
 
 class PlannerTaskComparator : Comparator<PlannerTask> {
     override fun compare(o1: PlannerTask?, o2: PlannerTask?): Int {
