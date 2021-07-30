@@ -1,19 +1,18 @@
 package com.example.mumjolandiaandroid.ui.planner.task
 
-import com.example.mumjolandiaandroid.R
-
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter.ViewHolder
 
 
 class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List<String>) : RecyclerView.Adapter<ViewHolder>() {
     private var mData: List<String>
-    private val mInflater: LayoutInflater
+    private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private var mClickListener: ItemClickListener? = null
 
     // inflates the row layout from xml when needed
@@ -33,15 +32,22 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
     }
 
     // stores and recycles views as they are scrolled off screen
-    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        var myTextView: TextView
+    inner class ViewHolder internal constructor(itemView: View) :
+        RecyclerView.ViewHolder(itemView),
+        View.OnClickListener,
+        View.OnLongClickListener {
+        var myTextView: TextView = itemView.findViewById(R.id.textViewPlannerRecyclerRow)
         override fun onClick(view: View?) {
             if (mClickListener != null) mClickListener!!.onItemClick(view, adapterPosition)
         }
 
+        override fun onLongClick(view: View?): Boolean {
+            if (mClickListener != null) mClickListener!!.onItemLongClick(view, adapterPosition)
+            return true
+        }
         init {
-            myTextView = itemView.findViewById(R.id.textViewPlannerRecyclerRow)
             itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
         }
     }
 
@@ -63,11 +69,11 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
     // parent activity will implement this method to respond to click events
     interface ItemClickListener {
         fun onItemClick(view: View?, position: Int)
+        fun onItemLongClick(view: View?, position: Int)
     }
 
     // data is passed into the constructor
     init {
-        mInflater = LayoutInflater.from(context)
         mData = data
     }
 }
