@@ -17,5 +17,11 @@ class TaskSupervisorHelper {
             // -541\t[--](08 Jul) example
             return taskString.subSequence(0, taskString.indexOf("\t")).toString().toInt()
         }
+
+        fun getTaskNameFromTaskString(taskString: String) : String{
+            // example string:
+            // -541\t[--](08 Jul) example
+            return taskString.subSequence(taskString.indexOf(")") + 1, taskString.length).toString()
+        }
     }
 }

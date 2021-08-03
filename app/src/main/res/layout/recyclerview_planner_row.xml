@@ -3,12 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/recyclerview_template"
     android:orientation="horizontal"
+
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
     android:padding="10dp">
 
     <TextView
         android:id="@+id/textViewPlannerRecyclerRow"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"/>
 

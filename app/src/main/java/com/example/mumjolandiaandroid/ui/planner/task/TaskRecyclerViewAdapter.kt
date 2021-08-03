@@ -1,6 +1,7 @@
 package com.example.mumjolandiaandroid.ui.planner.task
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter.ViewHolder
+import com.example.mumjolandiaandroid.utils.TaskSupervisorHelper
 
 
 class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List<String>) : RecyclerView.Adapter<ViewHolder>() {
@@ -23,7 +25,14 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
 
     // binds the data to the TextView in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.myTextView.text = mData[position]
+        holder.myTextView.text = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
+        if (TaskSupervisorHelper.getTaskDoneFromTaskString(mData[position])){
+            holder.myTextView.setBackgroundColor(Color.GREEN)
+            holder
+        }
+        else{
+            holder.myTextView.setBackgroundColor(Color.YELLOW)
+        }
     }
 
     // total number of rows

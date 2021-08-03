@@ -7,8 +7,8 @@ import kotlin.collections.ArrayList
 class PlanGenerator {
     fun generate(tasksToAdd: ArrayList<PlannerTask>): ArrayList<PlannerTask>{
         val returnArray = ArrayList<PlannerTask>()
-        val minHour = 0
-        val maxHour = 23
+        val minHour = 7
+        val maxHour = 20
         for (time in minHour..maxHour){
             var timeString = "$time:00"
             if (timeString.length < 5){
