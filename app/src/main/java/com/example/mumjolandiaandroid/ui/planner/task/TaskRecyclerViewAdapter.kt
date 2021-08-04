@@ -28,7 +28,6 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
         holder.myTextView.text = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
         if (TaskSupervisorHelper.getTaskDoneFromTaskString(mData[position])){
             holder.myTextView.setBackgroundColor(Color.GREEN)
-            holder
         }
         else{
             holder.myTextView.setBackgroundColor(Color.YELLOW)

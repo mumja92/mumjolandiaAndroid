@@ -8,12 +8,12 @@
 
     android:layout_marginBottom="5dp"
     android:layout_marginTop="5dp"
-    android:padding="10dp">
+    android:padding="1dp">
 
     <TextView
         android:id="@+id/textViewPlannerRecyclerRow"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:textSize="20sp"/>
 
 </LinearLayout>
