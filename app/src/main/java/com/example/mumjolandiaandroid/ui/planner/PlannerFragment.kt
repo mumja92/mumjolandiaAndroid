@@ -13,6 +13,7 @@ import com.example.mumjolandiaandroid.R
 import com.example.mumjolandiaandroid.ui.planner.plan.PlannerBackgroundTask
 import com.example.mumjolandiaandroid.ui.planner.plan.PlannerRecyclerViewAdapter
 import com.example.mumjolandiaandroid.ui.planner.task.TaskBackgroundTask
+import com.example.mumjolandiaandroid.ui.planner.task.TaskMode
 import com.example.mumjolandiaandroid.ui.planner.task.TaskRecyclerViewAdapter
 import com.example.mumjolandiaandroid.utils.Helpers
 import com.example.mumjolandiaandroid.utils.TaskSupervisorHelper
@@ -28,13 +29,15 @@ class PlannerFragment : Fragment(),
     PlannerRecyclerViewAdapter.ItemClickListener,
     TaskRecyclerViewAdapter.ItemClickListener
 {
-    private var viewChosenDay: TextView? = null
+    private var textViewChosenDay: TextView? = null
+    private var editTextFindTask: EditText? = null
     private var plannerRecyclerView: RecyclerView? = null
     private var plannerRecyclerViewAdapter: PlannerRecyclerViewAdapter? = null
     private var taskRecyclerView: RecyclerView? = null
     private var taskRecyclerViewAdapter: TaskRecyclerViewAdapter? = null
     private var buttonPreviousDay: Button? = null
     private var buttonNextDay: Button? = null
+    private var buttonFindTask: Button? = null
     private var chosenDay: Int = 0
     private var dialogPlanner: AlertDialog.Builder? = null
     private var mumjolandiaIp = "127.0.0.1"
@@ -43,7 +46,7 @@ class PlannerFragment : Fragment(),
     private var root: View? = null
     private var fabAddTask: FloatingActionButton? = null
     private var fabSwapTasksMode: FloatingActionButton? = null
-    private var flagTaskAllTaskMode = false
+    private var taskMode = TaskMode.TASK_CURRENT
 
     init {
         if (Helpers.isEmulator()) {
@@ -55,11 +58,13 @@ class PlannerFragment : Fragment(),
                               savedInstanceState: Bundle?): View? {
         root = inflater.inflate(R.layout.fragment_planner, container, false)
 
-        viewChosenDay = root?.findViewById(R.id.textViewPlannerChosenDay)
-        viewChosenDay?.text=chosenDay.toString()
-        viewChosenDay?.setOnClickListener {
+        textViewChosenDay = root?.findViewById(R.id.textViewPlannerChosenDay)
+        textViewChosenDay?.text=chosenDay.toString()
+        textViewChosenDay?.setOnClickListener {
             changeChosenDay(null)
         }
+
+        editTextFindTask = root?.findViewById(R.id.textViewPlannerFindTask)
 
         buttonPreviousDay = root?.findViewById(R.id.buttonPlannerPreviousDay)
         buttonPreviousDay?.setOnClickListener {
@@ -68,6 +73,10 @@ class PlannerFragment : Fragment(),
         buttonNextDay = root?.findViewById(R.id.buttonPlannerNextDay)
         buttonNextDay?.setOnClickListener {
             changeChosenDay(1)
+        }
+
+        buttonFindTask = root?.findViewById(R.id.buttonPlannerFindTask)
+        buttonFindTask?.setOnClickListener {
         }
 
         plannerRecyclerView = root?.findViewById(R.id.recyclerViewPlannerTasks)
@@ -145,11 +154,16 @@ class PlannerFragment : Fragment(),
             TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!).execute(command)
         }
         if (refreshTasks){
-            if (flagTaskAllTaskMode){
-                TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task ls x")
-            }
-            else{
-                TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!).execute("task ls")
+            when (taskMode){
+                TaskMode.TASK_CURRENT -> {
+                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!).execute("task ls")
+                }
+                TaskMode.TASK_ALL -> {
+                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task ls x")
+                }
+                TaskMode.TASK_FIND -> {
+
+                }
             }
         }
     }
@@ -161,25 +175,55 @@ class PlannerFragment : Fragment(),
         }
     }
 
+    private fun swapTaskMode(taskMode: TaskMode){
+        when (taskMode){
+            TaskMode.TASK_ALL -> {
+
+            }
+            TaskMode.TASK_CURRENT -> {
+
+            }
+            TaskMode.TASK_FIND -> {
+
+            }
+        }
+    }
+
     private fun swapTaskAndPlanner(){
         if (swapTaskAndPlanner){
             taskRecyclerView?.visibility = View.VISIBLE
-            plannerRecyclerView?.visibility = View.INVISIBLE
             fabAddTask?.visibility=View.VISIBLE
             fabSwapTasksMode?.visibility=View.VISIBLE
+            editTextFindTask?.visibility=View.VISIBLE
+            buttonFindTask?.visibility=View.VISIBLE
+
+            plannerRecyclerView?.visibility = View.INVISIBLE
+            buttonNextDay?.visibility=View.INVISIBLE
+            buttonPreviousDay?.visibility=View.INVISIBLE
+            textViewPlannerChosenDay?.visibility=View.INVISIBLE
         }
         else{
             taskRecyclerView?.visibility = View.INVISIBLE
-            plannerRecyclerView?.visibility = View.VISIBLE
             fabAddTask?.visibility=View.INVISIBLE
             fabSwapTasksMode?.visibility=View.INVISIBLE
+            editTextFindTask?.visibility=View.INVISIBLE
+            buttonFindTask?.visibility=View.INVISIBLE
+
+            plannerRecyclerView?.visibility = View.VISIBLE
+            buttonNextDay?.visibility=View.VISIBLE
+            buttonPreviousDay?.visibility=View.VISIBLE
+            textViewPlannerChosenDay?.visibility=View.VISIBLE
         }
         swapTaskAndPlanner = !swapTaskAndPlanner
 
     }
 
     private fun swapTaskAllTaskMode(){
-        flagTaskAllTaskMode = !flagTaskAllTaskMode
+        taskMode = if (taskMode == TaskMode.TASK_CURRENT){
+            TaskMode.TASK_ALL
+        } else{
+            TaskMode.TASK_CURRENT
+        }
         sendTaskCommand(null, true)
     }
     private fun changeChosenDay(dayShift: Int?){
@@ -304,11 +348,15 @@ class PlannerFragment : Fragment(),
     }
 
     private fun showDialogTaskSet(index: Int){
-        if (flagTaskAllTaskMode){
-            initAlertTaskSet(index, true)
-        }
-        else{
-            initAlertTaskSet(index, false)
+        when (taskMode){
+            TaskMode.TASK_CURRENT -> {
+                initAlertTaskSet(index, false)
+            }
+            TaskMode.TASK_ALL -> {
+                initAlertTaskSet(index, true)
+            }
+            TaskMode.TASK_FIND -> {
+            }
         }
         dialogPlanner?.show()
     }

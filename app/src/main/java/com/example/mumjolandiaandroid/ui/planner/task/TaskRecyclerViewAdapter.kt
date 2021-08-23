@@ -26,11 +26,16 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
     // binds the data to the TextView in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.myTextView.text = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
-        if (TaskSupervisorHelper.getTaskDoneFromTaskString(mData[position])){
-            holder.myTextView.setBackgroundColor(Color.GREEN)
-        }
-        else{
-            holder.myTextView.setBackgroundColor(Color.YELLOW)
+        when {
+            TaskSupervisorHelper.getTaskDoneFromTaskString(mData[position]) -> {
+                holder.myTextView.setBackgroundColor(Color.GREEN)
+            }
+            TaskSupervisorHelper.getTaskDateStringFromTaskString(mData[position]) == null -> {
+                holder.myTextView.setBackgroundColor(Color.WHITE)
+            }
+            else -> {
+                holder.myTextView.setBackgroundColor(Color.YELLOW)
+            }
         }
     }
 

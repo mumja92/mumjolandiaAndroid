@@ -30,6 +30,32 @@
         app:layout_constraintStart_toEndOf="@+id/buttonPlannerPreviousDay"
         app:layout_constraintTop_toTopOf="@+id/buttonPlannerPreviousDay" />
 
+    <EditText
+        android:id="@+id/textViewPlannerFindTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxEms="10"
+        android:minEms="10"
+        android:text=""
+        android:autofillHints="Type task to find"
+        android:hint="Type task to find"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPlannerFindTask"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonPlannerFindTask"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/buttonPlannerFindTask"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="find"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <Button
         android:id="@+id/buttonPlannerNextDay"
         android:layout_width="0dp"
