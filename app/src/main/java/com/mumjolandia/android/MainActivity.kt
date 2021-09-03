@@ -15,10 +15,15 @@ import android.app.PendingIntent
 import android.view.Menu
 import androidx.appcompat.widget.Toolbar
 import com.android.R
+import android.widget.Toast
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,6 +47,17 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navigationView, navController)
     }
 
+    override fun onStart() {
+        super.onStart()
+        showNotification()
+    }
+
+    override fun onDestroy() {
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+        super.onDestroy()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -54,25 +70,20 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancelAll()
-    }
-
-    fun showNotification() {
+    private fun showNotification() {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val notifications = notificationManager.activeNotifications
-        if (notifications.size == 0) {
+        if (notifications.isEmpty()) {
             val intent = Intent(applicationContext, MainActivity::class.java)
-            val channelId = "MUMJOLANDIA_CHANNEL"
+            val channelId = "MUMJOLANDIA_MAIN_CHANNEL"
             val notificationChannel = NotificationChannel(channelId, "mumjolandia", NotificationManager.IMPORTANCE_DEFAULT)
             val pendingIntent = PendingIntent.getActivity(applicationContext, 1, intent, 0)
             val notification = Notification.Builder(applicationContext, channelId)
-                .setContentText("mumjolandia")
+                .setContentTitle("mumjolandia")
+                .setContentText("mumjolandia is running")
                 .setContentIntent(pendingIntent)
                 .setChannelId(channelId)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setOngoing(true)
                 .build()
             notificationManager.createNotificationChannel(notificationChannel)
