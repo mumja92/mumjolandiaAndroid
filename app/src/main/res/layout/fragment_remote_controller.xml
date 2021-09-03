@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.remote_controller.RemoteControllerFragment">
+    tools:context="com.mumjolandia.android.ui.remote_controller.RemoteControllerFragment">
 
 
     <Button

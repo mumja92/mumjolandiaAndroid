@@ -7,33 +7,33 @@
 
     <fragment
         android:id="@+id/nav_planner"
-        android:name="com.example.mumjolandiaandroid.ui.planner.PlannerFragment"
+        android:name="com.mumjolandia.android.ui.planner.PlannerFragment"
         android:label="@string/menu_planner"
         tools:layout="@layout/fragment_planner">
     </fragment>
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.mumjolandiaandroid.ui.home.HomeFragment"
+        android:name="com.mumjolandia.android.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home">
     </fragment>
 
     <fragment
         android:id="@+id/nav_remote_controller"
-        android:name="com.example.mumjolandiaandroid.ui.remote_controller.RemoteControllerFragment"
+        android:name="com.mumjolandia.android.ui.remote_controller.RemoteControllerFragment"
         android:label="@string/menu_remote_controller"
         tools:layout="@layout/fragment_remote_controller" />
 
     <fragment
         android:id="@+id/nav_tetris"
-        android:name="com.example.mumjolandiaandroid.ui.tetris.TetrisFragment"
+        android:name="com.mumjolandia.android.ui.tetris.TetrisFragment"
         android:label="@string/menu_tetris"
         tools:layout="@layout/fragment_tetris" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.example.mumjolandiaandroid.ui.settings.SettingsFragment"
+        android:name="com.mumjolandia.android.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>
