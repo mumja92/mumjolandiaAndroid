@@ -25,4 +25,5 @@
     <string name="fragmentSettingsCurrentIp">current ip:</string>
     <string name="fragmentSettingsPort">port:</string>
     <string name="fragmentSettingsIp">ip:</string>
+    <string name="remoteControllerShutdownServer">Shutdown server</string>
 </resources>
