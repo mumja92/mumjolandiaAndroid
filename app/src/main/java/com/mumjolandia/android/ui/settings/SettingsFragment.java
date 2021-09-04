@@ -1,5 +1,6 @@
 package com.mumjolandia.android.ui.settings;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class SettingsFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
 
         Button buttonSaveIp = root.findViewById(R.id.buttonSettingsSaveIp);
+        Button buttonExit = root.findViewById((R.id.buttonSettingsExit));
         currentIp = root.findViewById(R.id.textViewSettingsCurrentIp);
         currentPort = root.findViewById(R.id.textViewSettingsCurrentPort);
         newIp = root.findViewById(R.id.editTextSettingsIp);
@@ -76,6 +78,18 @@ public class SettingsFragment extends Fragment {
                 }
                 savePortAndIp(ip, port);
                 loadPortAndIp();
+            }
+        });
+
+        buttonExit.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                NotificationManager nMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                nMgr.cancelAll();
+                getActivity().moveTaskToBack(true);
+                getActivity().finish();
             }
         });
 

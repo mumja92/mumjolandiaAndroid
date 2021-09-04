@@ -52,12 +52,6 @@ class MainActivity : AppCompatActivity() {
         showNotification()
     }
 
-    override fun onDestroy() {
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancelAll()
-        super.onDestroy()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -80,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             val pendingIntent = PendingIntent.getActivity(applicationContext, 1, intent, 0)
             val notification = Notification.Builder(applicationContext, channelId)
                 .setContentTitle("mumjolandia")
-                .setContentText("mumjolandia is running")
+                .setContentText("mumjolandia")
                 .setContentIntent(pendingIntent)
                 .setChannelId(channelId)
                 .setSmallIcon(R.drawable.ic_notification)
