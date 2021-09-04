@@ -31,6 +31,9 @@ class TaskBackgroundTask(
                 "MumjolandiaReturnValue.task_get" -> {
                     adapter?.reset(getNewTaskArray(separatedList.drop(1)))
                 }
+                "MumjolandiaReturnValue.task_find" -> {
+                    adapter?.reset(getNewTaskArray(separatedList.drop(1)))
+                }
                 else -> {
                 }
             }

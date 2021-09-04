@@ -19,6 +19,7 @@ import com.mumjolandia.android.utils.Helpers
 import com.mumjolandia.android.utils.TaskSupervisorHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.mumjolandia.android.utils.AndroidUtils
 import kotlinx.android.synthetic.main.fragment_planner.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -77,6 +78,10 @@ class PlannerFragment : Fragment(),
 
         buttonFindTask = root?.findViewById(R.id.buttonPlannerFindTask)
         buttonFindTask?.setOnClickListener {
+            if (editTextFindTask?.text.toString().isNotEmpty()){
+                changeTaskMode(TaskMode.TASK_FIND)
+                AndroidUtils.hideSoftKeyboard(requireActivity())
+            }
         }
 
         plannerRecyclerView = root?.findViewById(R.id.recyclerViewPlannerTasks)
@@ -108,7 +113,12 @@ class PlannerFragment : Fragment(),
 
         fabSwapTasksMode = root!!.findViewById(R.id.floating_button_planner_task_mode)
         fabSwapTasksMode?.setOnClickListener {
-            swapTaskAllTaskMode()
+            val newTaskMode = if (taskMode == TaskMode.TASK_CURRENT){
+                TaskMode.TASK_ALL
+            } else{
+                TaskMode.TASK_CURRENT
+            }
+            changeTaskMode(newTaskMode)
         }
         fabSwapTasksMode?.visibility=View.INVISIBLE
 
@@ -162,7 +172,9 @@ class PlannerFragment : Fragment(),
                     TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task ls x")
                 }
                 TaskMode.TASK_FIND -> {
-
+                    val parameter = editTextFindTask?.text.toString()
+                    editTextFindTask?.isCursorVisible = false
+                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task find $parameter")
                 }
             }
         }
@@ -172,20 +184,6 @@ class PlannerFragment : Fragment(),
         PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context, root!!).execute(command)
         if (refreshTasks){
             PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context, root!!).execute("planner get $chosenDay")
-        }
-    }
-
-    private fun swapTaskMode(taskMode: TaskMode){
-        when (taskMode){
-            TaskMode.TASK_ALL -> {
-
-            }
-            TaskMode.TASK_CURRENT -> {
-
-            }
-            TaskMode.TASK_FIND -> {
-
-            }
         }
     }
 
@@ -218,14 +216,11 @@ class PlannerFragment : Fragment(),
 
     }
 
-    private fun swapTaskAllTaskMode(){
-        taskMode = if (taskMode == TaskMode.TASK_CURRENT){
-            TaskMode.TASK_ALL
-        } else{
-            TaskMode.TASK_CURRENT
-        }
+    private fun changeTaskMode(newTaskMode: TaskMode){
+        taskMode = newTaskMode
         sendTaskCommand(null, true)
     }
+
     private fun changeChosenDay(dayShift: Int?){
         if (dayShift != null) {
             chosenDay += dayShift
@@ -356,6 +351,7 @@ class PlannerFragment : Fragment(),
                 initAlertTaskSet(index, true)
             }
             TaskMode.TASK_FIND -> {
+                initAlertTaskSet(index, true)
             }
         }
         dialogPlanner?.show()
