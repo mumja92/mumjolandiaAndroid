@@ -15,11 +15,6 @@ import android.app.PendingIntent
 import android.view.Menu
 import androidx.appcompat.widget.Toolbar
 import com.android.R
-import android.widget.Toast
-
-
-
-
 
 class MainActivity : AppCompatActivity() {
     private var mAppBarConfiguration: AppBarConfiguration? = null
@@ -35,9 +30,10 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = AppBarConfiguration.Builder(
             R.id.nav_planner,
-            R.id.nav_home,
+            R.id.nav_notepad,
             R.id.nav_remote_controller,
             R.id.nav_tetris,
+            R.id.nav_home,
             R.id.nav_settings
         )
                 .setDrawerLayout(drawer)

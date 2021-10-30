@@ -13,10 +13,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.mumjolandia.android.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home">
+        android:id="@+id/nav_notepad"
+        android:name="com.mumjolandia.android.ui.notepad.NotepadFragment"
+        android:label="@string/menu_notepad"
+        tools:layout="@layout/fragment_notepad">
     </fragment>
 
     <fragment
@@ -30,6 +30,14 @@
         android:name="com.mumjolandia.android.ui.tetris.TetrisFragment"
         android:label="@string/menu_tetris"
         tools:layout="@layout/fragment_tetris" />
+
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.mumjolandia.android.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home">
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"

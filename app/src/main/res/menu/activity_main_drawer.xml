@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_menu_planner_24"
             android:title="@string/menu_planner" />
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_home_24"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_notepad"
+            android:icon="@drawable/ic_menu_notepad"
+            android:title="@string/menu_notepad" />
         <item
             android:id="@+id/nav_remote_controller"
             android:icon="@drawable/ic_menu_remote_controller_24"
@@ -20,6 +20,10 @@
             android:id="@+id/nav_tetris"
             android:icon="@drawable/ic_menu_tetris_24"
             android:title="@string/menu_tetris" />
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home_24"
+            android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_settings"
