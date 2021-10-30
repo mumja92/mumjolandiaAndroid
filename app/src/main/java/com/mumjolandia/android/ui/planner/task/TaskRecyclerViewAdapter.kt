@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.R
 import com.mumjolandia.android.ui.planner.task.TaskRecyclerViewAdapter.ViewHolder
 import com.mumjolandia.android.utils.TaskSupervisorHelper
+import com.mumjolandia.android.utils.TaskType
 
 
 class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List<String>) : RecyclerView.Adapter<ViewHolder>() {
@@ -25,7 +26,14 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
 
     // binds the data to the TextView in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.myTextView.text = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
+        val taskName = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
+        when (TaskSupervisorHelper.getTaskTypeFromTaskString(mData[position])){
+            TaskType.EVENT -> {
+                val taskDate = TaskSupervisorHelper.getTaskDateStringFromTaskString(mData[position])
+                holder.myTextView.text = " [$taskDate] $taskName"
+            }
+            else -> holder.myTextView.text = " $taskName"
+        }
         when {
             TaskSupervisorHelper.getTaskDoneFromTaskString(mData[position]) -> {
                 holder.myTextView.setBackgroundColor(Color.GREEN)
