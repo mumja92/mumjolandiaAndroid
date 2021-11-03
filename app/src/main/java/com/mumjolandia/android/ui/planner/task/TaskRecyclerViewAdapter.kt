@@ -28,7 +28,7 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val taskName = TaskSupervisorHelper.getTaskNameFromTaskString(mData[position])
         when (TaskSupervisorHelper.getTaskTypeFromTaskString(mData[position])){
-            TaskType.EVENT -> {
+            TaskType.EVENT, TaskType.PERIODIC -> {
                 val taskDate = TaskSupervisorHelper.getTaskDateStringFromTaskString(mData[position])
                 holder.myTextView.text = " [$taskDate] $taskName"
             }

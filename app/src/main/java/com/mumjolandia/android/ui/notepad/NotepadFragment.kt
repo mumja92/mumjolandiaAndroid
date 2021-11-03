@@ -11,6 +11,8 @@ import android.widget.EditText
 import com.android.R
 
 import android.content.SharedPreferences
+import com.google.android.material.snackbar.Snackbar
+import com.mumjolandia.android.utils.AndroidUtils
 
 
 class NotepadFragment : Fragment() {
@@ -35,26 +37,31 @@ class NotepadFragment : Fragment() {
         editTextNotepadText?.setText(getNote())
         val buttonClear = root.findViewById<Button>(R.id.buttonNotepadClear)
         buttonClear.setOnClickListener {
-            saveNote(null)
-            editTextNotepadText?.setText(getNote())
+            editTextNotepadText?.setText(getNoteEmpty())
         }
 
         val buttonSave = root.findViewById<Button>(R.id.buttonNotepadSave)
         buttonSave.setOnClickListener {
             saveNote(editTextNotepadText?.text.toString())
             editTextNotepadText?.setText(getNote())
+            AndroidUtils.hideSoftKeyboard(requireActivity())
+            Snackbar.make(requireView(), "Saved", Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show()
         }
 
         return root
     }
 
-    override fun onPause() {
-        super.onPause()
-        saveNote(editTextNotepadText?.text.toString())
-    }
-
     private fun getNote(): String{
         var note = sharedPreferences?.getString(preferencesString, null) ?: ""
+        while (note.lines().size < minimumNoteRows){
+            note+="\n"
+        }
+        return note
+    }
+
+    private fun getNoteEmpty(): String{
+        var note = ""
         while (note.lines().size < minimumNoteRows){
             note+="\n"
         }
