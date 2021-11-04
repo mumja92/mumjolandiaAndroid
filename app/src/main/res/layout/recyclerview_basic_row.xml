@@ -11,7 +11,7 @@
     android:padding="1dp">
 
     <TextView
-        android:id="@+id/textViewPlannerRecyclerRow"
+        android:id="@+id/textViewRecyclerRowBasic"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:textSize="20sp"/>

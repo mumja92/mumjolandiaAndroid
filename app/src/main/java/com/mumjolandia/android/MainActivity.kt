@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_remote_controller,
             R.id.nav_tetris,
             R.id.nav_home,
+            R.id.nav_rootfs,
             R.id.nav_settings
         )
                 .setDrawerLayout(drawer)

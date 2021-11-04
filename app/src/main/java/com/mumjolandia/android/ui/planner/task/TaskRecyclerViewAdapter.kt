@@ -20,7 +20,7 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
 
     // inflates the row layout from xml when needed
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view: View = mInflater.inflate(R.layout.recyclerview_planner_row, parent, false)
+        val view: View = mInflater.inflate(R.layout.recyclerview_basic_row, parent, false)
         return ViewHolder(view)
     }
 
@@ -57,7 +57,7 @@ class TaskRecyclerViewAdapter internal constructor(context: Context?, data: List
         RecyclerView.ViewHolder(itemView),
         View.OnClickListener,
         View.OnLongClickListener {
-        var myTextView: TextView = itemView.findViewById(R.id.textViewPlannerRecyclerRow)
+        var myTextView: TextView = itemView.findViewById(R.id.textViewRecyclerRowBasic)
         override fun onClick(view: View?) {
             if (mClickListener != null) mClickListener!!.onItemClick(view, adapterPosition)
         }

@@ -29,4 +29,7 @@
     <string name="remoteControllerShutdownServer">Shutdown server</string>
     <string name="notepad_save">Save</string>
     <string name="notepad_clear">Clear</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_rootfs">File Explorer</string>
 </resources>
