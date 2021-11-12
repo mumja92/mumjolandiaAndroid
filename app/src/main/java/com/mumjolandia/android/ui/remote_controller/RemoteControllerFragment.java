@@ -16,12 +16,13 @@ import com.android.R;
 import com.mumjolandia.android.utils.MumjolandiaCommunicator;
 
 public class RemoteControllerFragment extends Fragment {
+    String ip = "127.0.0.1";
+    int port = 3335;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_remote_controller, container, false);
 
-        TextView textViewServerIp = root.findViewById(R.id.textViewRemoteControllerServerIp);
         Button buttonPlayPause = root.findViewById(R.id.buttonPlayPause);
         Button buttonNext = root.findViewById(R.id.buttonNext);
         Button buttonPrevious = root.findViewById(R.id.buttonPrevious);
@@ -30,25 +31,17 @@ public class RemoteControllerFragment extends Fragment {
         Button buttonVolDown = root.findViewById(R.id.buttonVolDown);
         Button buttonExit = root.findViewById(R.id.buttonRemoteControllerExit);
 
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        String ip = prefs.getString(getString(R.string.mumjolandiaIpKey), "127.0.0.1");
-        int port = prefs.getInt(getString(R.string.mumjolandiaPortKey), 3333);
-        String serverText = ip + ":" + port;
-        textViewServerIp.setText(serverText);
-        buttonPlayPause.setOnClickListener(v -> sendCommand("play"));
-        buttonNext.setOnClickListener(v -> sendCommand("next"));
-        buttonPrevious.setOnClickListener(v -> sendCommand("prev"));
-        buttonMute.setOnClickListener(v -> sendCommand("mute"));
-        buttonVolUp.setOnClickListener(v -> sendCommand("vol+"));
-        buttonVolDown.setOnClickListener(v -> sendCommand("vol-"));
-        buttonExit.setOnClickListener(v -> sendCommand("exit"));
+        buttonPlayPause.setOnClickListener(v -> sendCommand("ssh send play"));
+        buttonNext.setOnClickListener(v -> sendCommand("ssh send next"));
+        buttonPrevious.setOnClickListener(v -> sendCommand("ssh send prev"));
+        buttonMute.setOnClickListener(v -> sendCommand("ssh send mute"));
+        buttonVolUp.setOnClickListener(v -> sendCommand("ssh send vol+"));
+        buttonVolDown.setOnClickListener(v -> sendCommand("ssh send vol-"));
+        buttonExit.setOnClickListener(v -> sendCommand("ssh send exit"));
         return root;
     }
 
     private void sendCommand(String command){
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        String ip = prefs.getString(getString(R.string.mumjolandiaIpKey), "127.0.0.1");
-        int port = prefs.getInt(getString(R.string.mumjolandiaPortKey), 3333);
         new MumjolandiaCommunicator(ip, port).execute(command);
     }
 }

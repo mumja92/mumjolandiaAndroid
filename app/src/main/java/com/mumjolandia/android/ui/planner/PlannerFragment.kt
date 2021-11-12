@@ -41,8 +41,8 @@ class PlannerFragment : Fragment(),
     private var buttonFindTask: Button? = null
     private var chosenDay: Int = 0
     private var dialogPlanner: AlertDialog.Builder? = null
-    private var mumjolandiaIp = "127.0.0.1"
-    private var mumjolandiaPort = 3335
+    private var mumjolandiaLocalIp = "127.0.0.1"
+    private var mumjolandiaLocalPort = 3335
     private var swapTaskAndPlanner = false
     private var root: View? = null
     private var fabAddTask: FloatingActionButton? = null
@@ -51,7 +51,7 @@ class PlannerFragment : Fragment(),
 
     init {
         if (Helpers.isEmulator()) {
-            mumjolandiaIp = "10.0.2.2"
+            mumjolandiaLocalIp = "10.0.2.2"
         }
     }
 
@@ -161,29 +161,29 @@ class PlannerFragment : Fragment(),
 
     private fun sendTaskCommand(command: String?, refreshTasks: Boolean = true){
         if (command != null){
-            TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!).execute(command)
+            TaskBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, taskRecyclerViewAdapter, context, root!!).execute(command)
         }
         if (refreshTasks){
             when (taskMode){
                 TaskMode.TASK_CURRENT -> {
-                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!).execute("task ls")
+                    TaskBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, taskRecyclerViewAdapter, context, root!!).execute("task ls")
                 }
                 TaskMode.TASK_ALL -> {
-                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task ls x")
+                    TaskBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, taskRecyclerViewAdapter, context, root!!, true).execute("task ls x")
                 }
                 TaskMode.TASK_FIND -> {
                     val parameter = editTextFindTask?.text.toString()
                     editTextFindTask?.isCursorVisible = false
-                    TaskBackgroundTask(mumjolandiaIp, mumjolandiaPort, taskRecyclerViewAdapter, context, root!!, true).execute("task find $parameter")
+                    TaskBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, taskRecyclerViewAdapter, context, root!!, true).execute("task find $parameter")
                 }
             }
         }
     }
 
     private fun sendPlanCommand(command: String, refreshTasks: Boolean = true){
-        PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context, root!!).execute(command)
+        PlannerBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, plannerRecyclerViewAdapter, context, root!!).execute(command)
         if (refreshTasks){
-            PlannerBackgroundTask(mumjolandiaIp, mumjolandiaPort, plannerRecyclerViewAdapter, context, root!!).execute("planner get $chosenDay")
+            PlannerBackgroundTask(mumjolandiaLocalIp, mumjolandiaLocalPort, plannerRecyclerViewAdapter, context, root!!).execute("planner get $chosenDay")
         }
     }
 
