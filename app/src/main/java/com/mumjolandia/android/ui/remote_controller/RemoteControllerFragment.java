@@ -16,7 +16,7 @@ import com.android.R;
 import com.mumjolandia.android.utils.MumjolandiaCommunicator;
 
 public class RemoteControllerFragment extends Fragment {
-    String ip = "127.0.0.1";
+    String ip = "127.0.0.1";    //sending to local (python) mumjolandia that will pass it further
     int port = 3335;
 
     public View onCreateView(@NonNull LayoutInflater inflater,

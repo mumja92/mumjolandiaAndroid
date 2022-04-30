@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class MumjolandiaCommunicator extends AsyncTask<String, Void, String> {
+public class MumjolandiaCommunicator extends AsyncTask<String, Void, MumjolandiaResponse> {
     private String serverIp;
     private int serverPort;
 
@@ -17,37 +17,47 @@ public class MumjolandiaCommunicator extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected MumjolandiaResponse doInBackground(String... params) {
         if(android.os.Debug.isDebuggerConnected())
             android.os.Debug.waitForDebugger();
         String command = params[0];
         return send(command);
     }
 
-    private String send(String command){
-        String return_value = "";
+    private MumjolandiaResponse send(String command){
+        byte[] return_bytes = {};
+        int return_status = -1;
+        int statusSize = 2;
         try (Socket socket = new Socket(serverIp, serverPort)) {
             byte[] messageLength = intToByteArray(command.length());
             byte[] message = command.getBytes();
-            byte[] byteMessage = new byte[messageLength.length + message.length];
+            byte[] byteMessage = new byte[messageLength.length + statusSize + message.length];
 
+            // write length as bytes
             System.arraycopy(messageLength, 0, byteMessage, 0, messageLength.length);
-            System.arraycopy(message, 0, byteMessage, messageLength.length, message.length);
+            // write status as bytes
+            for (int i=0; i< statusSize; i++){
+                byteMessage[messageLength.length + i] = 0x0;
+            }
+            // write message as bytes
+            System.arraycopy(message, 0, byteMessage, messageLength.length + statusSize, message.length);
             DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
             DataInputStream dIn = new DataInputStream(socket.getInputStream());
             dOut.write(byteMessage);
 
             int length = dIn.readInt();                    // read length of incoming message
             if(length>0) {
-                byte[] return_message = new byte[length];
+                byte[] return_message = new byte[length + statusSize];
                 dIn.readFully(return_message, 0, return_message.length); // read the message
-                return_value = new String(return_message, StandardCharsets.UTF_8);
+                return_status = ((return_message[0] & 0xff) << 8) | (return_message[1] & 0xff);
+                return_bytes = new byte[length];
+                System.arraycopy(return_message, statusSize, return_bytes, 0, length);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return return_value;
+        return new MumjolandiaResponse(return_status, return_bytes);
     }
     private byte[] intToByteArray(int value) {
         return new byte[] {

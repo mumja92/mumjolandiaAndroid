@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import com.mumjolandia.android.utils.MumjolandiaCommunicator
 import com.google.android.material.snackbar.Snackbar
+import com.mumjolandia.android.utils.MumjolandiaResponse
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -15,12 +16,12 @@ class PlannerBackgroundTask(
     private val context: Context?,
     private val rootView: View,
 ) : MumjolandiaCommunicator(ip, port) {
-    public override fun onPostExecute(result: String) {
-        if (result == ""){
+    public override fun onPostExecute(result: MumjolandiaResponse) {
+        if (result.string == ""){
             Toast.makeText(context, "Can't connect to mumjolandia", Toast.LENGTH_SHORT).show()
         }
         else{
-            val separatedList: List<String> = result.split("\n")
+            val separatedList: List<String> = result.string.split("\n")
             val mumjolandiaReturnValue = separatedList[0]
             if (mumjolandiaReturnValue != "MumjolandiaReturnValue.planner_get_ok"){
                 var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()

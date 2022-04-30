@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.android.R;
 import com.mumjolandia.android.utils.Helpers;
 import com.mumjolandia.android.utils.MumjolandiaCommunicator;
+import com.mumjolandia.android.utils.MumjolandiaResponse;
 
 public class HomeFragment extends Fragment {
 
@@ -65,9 +66,9 @@ public class HomeFragment extends Fragment {
             this.context = context;
         }
 
-        public void onPostExecute(String result) {
+        public void onPostExecute(MumjolandiaResponse result) {
             TextView textView = (TextView) ((Activity) context).findViewById(R.id.textViewHomeResponse);
-            textView.setText(result);
+            textView.setText(result.getString());
         }
     }
 }

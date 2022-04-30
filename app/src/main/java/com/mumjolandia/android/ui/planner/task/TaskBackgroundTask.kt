@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import com.mumjolandia.android.utils.MumjolandiaCommunicator
 import com.google.android.material.snackbar.Snackbar
+import com.mumjolandia.android.utils.MumjolandiaResponse
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -15,9 +16,9 @@ class TaskBackgroundTask(
     private val rootView: View,
     private val invertList: Boolean = false
 ) : MumjolandiaCommunicator(ip, port) {
-    public override fun onPostExecute(result: String) {
-        if (result != ""){
-            val separatedList: List<String> = result.split("\n")
+    public override fun onPostExecute(result: MumjolandiaResponse) {
+        if (result.string != ""){
+            val separatedList: List<String> = result.string.split("\n")
             val mumjolandiaReturnValue = separatedList[0]
             if (mumjolandiaReturnValue != "MumjolandiaReturnValue.task_get"){
                 var returnStatus = mumjolandiaReturnValue.subSequence(23, mumjolandiaReturnValue.length).toString()

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.mumjolandia.android.utils.MumjolandiaCommunicator
+import com.mumjolandia.android.utils.MumjolandiaResponse
 import kotlin.collections.ArrayList
 
 class RootFSBackgroundTask(
@@ -14,9 +15,9 @@ class RootFSBackgroundTask(
     private val textViewCwd: TextView?,
     private val rootView: View,
 ) : MumjolandiaCommunicator(ip, port) {
-    public override fun onPostExecute(result: String) {
-        if (result != ""){
-            val separatedList: List<String> = result.split("\n")
+    public override fun onPostExecute(result: MumjolandiaResponse) {
+        if (result.string != ""){
+            val separatedList: List<String> = result.string.split("\n")
             when (separatedList[0]) {
                 "MumjolandiaReturnValue.rootfs_pwd_ok" -> {
                     executeCwd(separatedList[1])
